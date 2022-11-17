@@ -1,7 +1,44 @@
-from dash import Dash, html, Input, Output
+from dash import Dash, html, Input, Output, dcc
 import dash_cytoscape as cyto
 
 app = Dash(__name__)
+# This is going to be an alternate data style to facilatate a more node spicific
+# data stream. Each node will have its own values, the user will affect pressure.
+
+
+# app.layout = html.Div([
+#     cyto.Cytoscape(
+#         id='cytoscape-elements-boolean',
+#         layout={'name': 'preset'},
+#         style={'width': '100%', 'height': '400px'},
+#         elements=[
+#             {
+#                 'data': {'id': 'one', 'label': 'Locked'},
+#                 'position': {'x': 75, 'y': 75},
+#                 'locked': True
+#             },
+#             {
+#                 'data': {'id': 'two', 'label': 'Selected'},
+#                 'position': {'x': 75, 'y': 200},
+#                 'selected': True
+#             },
+#             {
+#                 'data': {'id': 'three', 'label': 'Not Selectable'},
+#                 'position': {'x': 200, 'y': 75},
+#                 'selectable': False
+#             },
+#             {
+#                 'data': {'id': 'four', 'label': 'Not grabbable'},
+#                 'position': {'x': 200, 'y': 200},
+#                 'grabbable': False
+#             },
+#             {'data': {'source': 'one', 'target': 'two'}},
+#             {'data': {'source': 'two', 'target': 'three'}},
+#             {'data': {'source': 'three', 'target': 'four'}},
+#             {'data': {'source': 'two', 'target': 'four'}},
+#         ]
+#     )
+# ])
 
 styles = {
     'pre': {
@@ -10,11 +47,10 @@ styles = {
     }
 }
 
-
 nodes = [
     {
         'data': {'id': short, 'label': label},
-        'position': {'x': 20*lat, 'y': -20*long}
+        'position': {'x': 20 * lat, 'y': -20 * long}
     }
     for short, label, long, lat in (
         ('N1', '1st Node', 34.03, -118.25),
@@ -44,7 +80,6 @@ edges = [
     )
 ]
 
-
 default_stylesheet = [
     {
         'selector': 'node',
@@ -55,12 +90,11 @@ default_stylesheet = [
     }
 ]
 
-
 app.layout = html.Div([
     cyto.Cytoscape(
         id='cytoscape-event-callbacks-2',
         layout={'name': 'preset'},
-        elements=edges+nodes,
+        elements=edges + nodes,
         stylesheet=default_stylesheet,
         style={'width': '100%', 'height': '450px'}
     ),
@@ -71,6 +105,7 @@ app.layout = html.Div([
 ])
 
 
+# callbacks are needed to ensurea app is updateing on the backend when the nodes are being minupulated
 @app.callback(Output('cytoscape-tapNodeData-output', 'children'),
               Input('cytoscape-event-callbacks-2', 'tapNodeData'))
 def displayTapNodeData(data):
@@ -103,4 +138,3 @@ def displayTapEdgeData(data):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
